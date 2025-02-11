@@ -1,0 +1,66 @@
+name: Build_Test_Deploy
+
+on:
+  push:
+    branches:
+      - main  # Runs on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Runs on pull requests targeting the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (adjust version as needed)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Set the Node.js version to match your project
+
+      - name: Install dependencies
+        run: npm install  # Replace with your package manager if not npm
+
+      - name: Build project
+        run: npm run build  # Adjust this based on your build command (webpack, etc.)
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build  # Ensures this runs after the build job
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (same version as in build)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install  # Ensure dependencies are installed for testing
+
+      - name: Run tests
+        run: npm test  # Adjust this to match your test runner command (e.g., Jest, Mocha)
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test  # Ensures this runs after tests pass
+    if: success()  # Deploy only if previous steps succeed
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (same version as in build and test)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install  # Install any dependencies needed for deployment
+
+      - name: Deploy to production (example deployment step)
+        run: npm run deploy  # Replace this with your actual deploy command, e.g., for Heroku, AWS, etc.
+        env:
+          DEPLOYMENT_SECRET: ${{ secrets.DEPLOYMENT_SECRET }}  # Use GitHub Secrets for sensitive data
