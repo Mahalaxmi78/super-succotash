@@ -1,0 +1,29 @@
+name: build1-test1-deploy1
+
+on:
+  push:
+    branches:
+      - main  # Runs on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Runs on pull requests targeting the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (adjust version as needed)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Set the Node.js version to match your project
+
+      - name: Install dependencies
+        run: npm install  # Replace with your package manager if not npm
+
+      - name: Build project
+        run: npm run build  # Adjust this based on your build command (webpack, etc.)
+
+  
